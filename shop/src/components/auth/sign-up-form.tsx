@@ -93,13 +93,14 @@ const SignUpForm: React.FC<Props> = ({ layout = "modal" }) => {
             setErrorMessage(t("forms:error-credential-wrong"));
           }
         }).catch((error) => {
-          console.log(error)
+          if(error.code === 'auth/email-already-in-use'){
+            setErrorMessage('Already Exist Email');
+          }
  })
   }
   function signInWithGoogle(){
     const googleProvider = new GoogleAuthProvider();
     signInWithPopup(auth, googleProvider).then((res) => {
-      console.log(res.user)
       if (res.user.accessToken) {
         Cookies.set(AUTH_TOKEN, res.user.accessToken, {
           expires: 'remember_me' ? 365 : undefined,

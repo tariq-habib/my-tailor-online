@@ -18,8 +18,8 @@ const firebaseConfig = {
 
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
-export const auth = getAuth();
-// export const verify = new RecaptchaVerifier('recaptcha-container', {}, auth);
+export const auth = getAuth(app);
+// export const verify = new RecaptchaVerifier('recaptcha-container', {}, auth); 
 const googleProvider = new GoogleAuthProvider();
 export const signInWithGoogle = () => {
     signInWithPopup(auth, googleProvider).then((res) => {

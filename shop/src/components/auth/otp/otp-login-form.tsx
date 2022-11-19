@@ -18,7 +18,7 @@ import { Controller } from "react-hook-form";
 import { getDirection } from "@utils/get-direction";
 import { useRouter } from "next/router";
 import {auth} from '../../../../../firebase-config';
-import {signInWithPhoneNumber,RecaptchaVerifier } from 'firebase/auth'
+import {signInWithPhoneNumber,RecaptchaVerifier,getAuth } from 'firebase/auth'
 interface OTPProps {
   onLoginSuccess: (token: string) => void;
 }
@@ -76,16 +76,28 @@ export const OTPLoginForm: React.FC<OTPProps> = ({ onLoginSuccess }) => {
     shouldUnregister: true,
   });
 
-  function onSendCodeSubmission() {
-    const recaptchaVerifier = new RecaptchaVerifier('recaptcha-container', {
+  function onCaptchaVerify(){
+    window.recaptchaVerifier = new RecaptchaVerifier('sign-in-button', {
+    'size': 'invisible',
+    'callback': (response) => {
+      onSendCodeSubmission();
+    },
+    'expired-callback': () => {
+      // Response expired. Ask user to solve reCAPTCHA again.
+      // ...
+    }
     }, auth);
-    signInWithPhoneNumber(auth,number,recaptchaVerifier).then((data) => {
+  }
+  function onSendCodeSubmission() {
+    onCaptchaVerify();
+    let appVerifier = window.recaptchaVerifier;
+    signInWithPhoneNumber(auth,number,appVerifier).then((data) => {
       // if (data?.success) {
         setErrorMessage(null);
         setIsContactExist(data?.is_contact_exist);
         setHasOTP(true);
         setOtpId(data?.sendOtpCode?.id!);
-
+        window.confirmationResult = data;
         // Update isContactExist value for update validation
         setValue("isContactExist", !!data?.is_contact_exist);
       // }
@@ -123,28 +135,42 @@ export const OTPLoginForm: React.FC<OTPProps> = ({ onLoginSuccess }) => {
   }
 
   function onOtpLoginSubmission(values: any) {
-    otpLogin(
-      {
-        ...values,
-        phone_number: number,
-        otp_id: otpId,
-      },
-      {
-        onSuccess: (data) => {
-          if (data?.token && data?.permissions?.length) {
-            onLoginSuccess(data?.token);
-          }
-
-          if (!data?.token) {
-            setErrorMessage("text-otp-verify-failed");
-          }
-        },
-        onError: (error: any) => {
-          console.log("Error", error);
-          setErrorMessage(error?.response?.data?.message);
-        },
+    confirmationResult.confirm(values.code).then((data) => {
+      console.log(data);
+      if (data.user.accessToken) {
+        onLoginSuccess(data.user.accessToken);
       }
-    );
+
+      if (!data.user.accessToken) {
+        setErrorMessage("text-otp-verify-failed");
+      }
+      // ...
+    }).catch((error) => {
+      console.log("Error", error);
+      setErrorMessage(error?.response?.data?.message);
+    });
+    // otpLogin(
+    //   {
+    //     ...values,
+    //     phone_number: number,
+    //     otp_id: otpId,
+    //   },
+    //   {
+    //     onSuccess: (data) => {
+    //       if (data?.token && data?.permissions?.length) {
+    //         onLoginSuccess(data?.token);
+    //       }
+
+    //       if (!data?.token) {
+    //         setErrorMessage("text-otp-verify-failed");
+    //       }
+    //     },
+    //     onError: (error: any) => {
+    //       console.log("Error", error);
+    //       setErrorMessage(error?.response?.data?.message);
+    //     },
+    //   }
+    // );
   }
   return (
     <>
@@ -160,6 +186,7 @@ export const OTPLoginForm: React.FC<OTPProps> = ({ onLoginSuccess }) => {
 
       {!hasOTP ? (
         <div className={`flex items-center ${dir === 'rtl' ? 'rtl-view': 'ltr-view'}`}>
+           
           <PhoneInput
             country={"us"}
             value={number}
@@ -178,7 +205,6 @@ export const OTPLoginForm: React.FC<OTPProps> = ({ onLoginSuccess }) => {
         </div>
       ) : (
         <div className="w-full flex flex-col md:flex-row md:items-center md:space-x-5">
-          <div id="recaptcha-container"></div>
           <form onSubmit={handleSubmit(onOtpLoginSubmission)}>
             <div className="flex flex-col space-y-4">
               {!isContactExist && (
@@ -245,11 +271,15 @@ export const OTPLoginForm: React.FC<OTPProps> = ({ onLoginSuccess }) => {
                 >
                   {t("common:text-login")}
                 </Button>
+                
               </div>
             </div>
           </form>
+          
         </div>
+        
       )}
+      <div id="sign-in-button"></div>
     </>
   );
 };
