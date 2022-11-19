@@ -51,9 +51,9 @@ const ProductSingleDetails: React.FC<Props> = ({ product }: any) => {
 
   const isSelected = !isEmpty(variations)
     ? !isEmpty(attributes) &&
-      Object.keys(variations).every((variation) =>
-        attributes.hasOwnProperty(variation)
-      )
+    Object.keys(variations).every((variation) =>
+      attributes.hasOwnProperty(variation)
+    )
     : true;
 
   let selectedVariation: any = {};
@@ -184,6 +184,11 @@ const ProductSingleDetails: React.FC<Props> = ({ product }: any) => {
               </div>
             </div>
           )}
+          <div>
+            <h1 style={{ fontSize: "1.5rem", color: "#000", fontWeight: "700" }}>Reviews</h1>
+            <h6 style={{ fontSize: "1.rem", color: "#000", fontWeight: "600" }}>Mohammad Anas</h6>
+            <p>This Product is very comfortable and fabric quality is next level. I am satisfied with this product</p>
+          </div>
         </div>
       )}
 
@@ -250,7 +255,9 @@ const ProductSingleDetails: React.FC<Props> = ({ product }: any) => {
               ) : (
                 <div className="text-base text-red-500 whitespace-nowrap ltr:lg:ml-7 rtl:lg:mr-7">
                   {t("text-out-stock")}
+
                 </div>
+
               )}
             </>
           )}
@@ -258,7 +265,7 @@ const ProductSingleDetails: React.FC<Props> = ({ product }: any) => {
           {!isEmpty(selectedVariation) && (
             <>
               {selectedVariation?.is_disable ||
-              selectedVariation.quantity === 0 ? (
+                selectedVariation.quantity === 0 ? (
                 <div className="text-base text-red-500 whitespace-nowrap ltr:lg:ml-7 rtl:lg:mr-7">
                   {t("text-out-stock")}
                 </div>
@@ -280,9 +287,8 @@ const ProductSingleDetails: React.FC<Props> = ({ product }: any) => {
           <Button
             onClick={addToCart}
             variant="slim"
-            className={`w-full md:w-6/12 xl:w-full ${
-              !isSelected && "bg-gray-400 hover:bg-gray-400"
-            }`}
+            className={`w-full md:w-6/12 xl:w-full ${!isSelected && "bg-gray-400 hover:bg-gray-400"
+              }`}
             disabled={
               !isSelected ||
               !product?.quantity ||
@@ -292,11 +298,15 @@ const ProductSingleDetails: React.FC<Props> = ({ product }: any) => {
           >
             <span className="py-2 3xl:px-8">
               {product?.quantity ||
-              (!isEmpty(selectedVariation) && selectedVariation?.quantity)
+                (!isEmpty(selectedVariation) && selectedVariation?.quantity)
                 ? t("text-add-to-cart")
                 : t("text-out-stock")}
             </span>
           </Button>
+          <Button variant="slim"
+            className={`w-full md:w-6/12 xl:w-full ${!isSelected && "bg-gray-400 hover:bg-gray-400"
+              }`}>Customize</Button>
+
         </div>
         <div className="py-6">
           <ul className="text-sm space-y-5 pb-1">
@@ -362,6 +372,40 @@ const ProductSingleDetails: React.FC<Props> = ({ product }: any) => {
               </Link>
             </li>
 
+            <li>
+              <span className="font-semibold text-heading inline-block ltr:pr-2 rtl:pl-2">
+                {t("text-shop-colon")}
+              </span>
+              <Link
+                href={`${ROUTES.SHOPS}/${product?.shop?.slug}`}
+                className="inline-block ltr:pr-1.5 rtl:pl-1.5 transition hover:underline hover:text-heading ltr:last:pr-0 rtl:last:pl-0"
+              >
+                {product?.shop?.name}
+              </Link>
+            </li>
+            <li>
+              <span className="font-semibold text-heading inline-block ltr:pr-2 rtl:pl-2">
+                Fabric:
+              </span>
+              <Link
+                href={`${ROUTES.SHOPS}/${product?.shop?.slug}`}
+                className="inline-block ltr:pr-1.5 rtl:pl-1.5 transition hover:underline hover:text-heading ltr:last:pr-0 rtl:last:pl-0"
+              >
+                Cotton and Silk
+              </Link>
+            </li>
+
+            <li>
+              <span className="font-semibold text-heading inline-block ltr:pr-2 rtl:pl-2">
+                Refund Policies:
+              </span>
+              <Link
+                href={`${ROUTES.SHOPS}/${product?.shop?.slug}`}
+                className="inline-block ltr:pr-1.5 rtl:pl-1.5 transition hover:underline hover:text-heading ltr:last:pr-0 rtl:last:pl-0"
+              >
+                15 days Replacement
+              </Link>
+            </li>
             {/* <li>
               <span className="font-semibold text-heading inline-block ltr:pr-2 rtl:pl-2">
                 {t("text-shop-colon")}
@@ -373,6 +417,7 @@ const ProductSingleDetails: React.FC<Props> = ({ product }: any) => {
                 {product?.shop?.name}
               </Link>
             </li> */}
+
           </ul>
         </div>
       </div>

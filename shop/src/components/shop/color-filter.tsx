@@ -42,30 +42,32 @@ export const ColorFilter: React.FC<Props> = ({attribute}) => {
 	}
 
 	return (
-		<div className="block border-b border-gray-300 pb-7 mb-7">
-			<h3 className="text-heading text-sm md:text-base font-semibold mb-7">
-				{t("text-colors")}
-			</h3>
-			<div className="mt-2 flex flex-col space-y-4">
-				{attribute.values?.map((item: AttributeValue) => (
-					<CheckBox
-						key={item.id}
-						label={
-							<span className="flex items-center">
-								<span
-									className={`w-5 h-5 rounded-full block ltr:mr-3 rtl:ml-3 mt-0.5 border border-black border-opacity-20`}
-									style={{ backgroundColor: item.meta ?? item.value }}
-								/>
-								{item.value}
-							</span>
-						}
-						name={item.value.toLowerCase()}
-						checked={formState.includes(item.value)}
-						value={item.value}
-						onChange={handleItemClick}
-					/>
-				))}
-			</div>
-		</div>
+		<>
+		</>
+		// <div className="block border-b border-gray-300 pb-7 mb-7">
+		// 	<h3 className="text-heading text-sm md:text-base font-semibold mb-7">
+		// 		{t("text-colors")}
+		// 	</h3>
+		// 	<div className="mt-2 flex flex-col space-y-4">
+		// 		{attribute.values?.map((item: AttributeValue) => (
+		// 			<CheckBox
+		// 				key={item.id}
+		// 				label={
+		// 					<span className="flex items-center">
+		// 						<span
+		// 							className={`w-5 h-5 rounded-full block ltr:mr-3 rtl:ml-3 mt-0.5 border border-black border-opacity-20`}
+		// 							style={{ backgroundColor: item.meta ?? item.value }}
+		// 						/>
+		// 						{item.value}
+		// 					</span>
+		// 				}
+		// 				name={item.value.toLowerCase()}
+		// 				checked={formState.includes(item.value)}
+		// 				value={item.value}
+		// 				onChange={handleItemClick}
+		// 			/>
+		// 		))}
+		// 	</div>
+		// </div>
 	);
 };
