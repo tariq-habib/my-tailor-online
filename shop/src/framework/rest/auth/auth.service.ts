@@ -10,6 +10,11 @@ export type RegisterUserInputType = {
   email: string;
   password: string;
 };
+export type SocialSignup={
+  provider:string,
+  name:string,
+  email:string,
+}
 
 export type ChangePasswordInputType = {
   oldPassword: string;

@@ -149,28 +149,28 @@ export const OTPLoginForm: React.FC<OTPProps> = ({ onLoginSuccess }) => {
       console.log("Error", error);
       setErrorMessage(error?.response?.data?.message);
     });
-    // otpLogin(
-    //   {
-    //     ...values,
-    //     phone_number: number,
-    //     otp_id: otpId,
-    //   },
-    //   {
-    //     onSuccess: (data) => {
-    //       if (data?.token && data?.permissions?.length) {
-    //         onLoginSuccess(data?.token);
-    //       }
+    otpLogin(
+      {
+        ...values,
+        phone_number: number,
+        otp_id: otpId,
+      },
+      {
+        onSuccess: (data) => {
+          if (data?.token && data?.permissions?.length) {
+            onLoginSuccess(data?.token);
+          }
 
-    //       if (!data?.token) {
-    //         setErrorMessage("text-otp-verify-failed");
-    //       }
-    //     },
-    //     onError: (error: any) => {
-    //       console.log("Error", error);
-    //       setErrorMessage(error?.response?.data?.message);
-    //     },
-    //   }
-    // );
+          if (!data?.token) {
+            setErrorMessage("text-otp-verify-failed");
+          }
+        },
+        onError: (error: any) => {
+          console.log("Error", error);
+          setErrorMessage(error?.response?.data?.message);
+        },
+      }
+    );
   }
   return (
     <>

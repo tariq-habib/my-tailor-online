@@ -68,11 +68,43 @@ const LoginForm: React.FC<Props> = ({ layout = "modal" }) => {
     signInWithEmailAndPassword(auth, email, password)
         .then((data) => {
           console.log(data)
-             if (data.user.accessToken) {
-            Cookies.set(AUTH_TOKEN, data.user.accessToken, {
+          //    if (data.user.accessToken) {
+          //   Cookies.set(AUTH_TOKEN, data.user.accessToken, {
+          //     expires: remember_me ? 365 : undefined,
+          //   });
+          //   authorize(true);
+          //   if (layout === "page") {
+          //     // Redirect to the my-account page
+          //     return router.push(ROUTES.ACCOUNT);
+          //   } else {
+          //     closeModal();
+          //     return;
+          //   }
+          // }
+          // if (!data._tokenResponse.refreshToken) {
+          // setErrorMessage(t("forms:error-credential-wrong"));
+          // }
+        }).catch((error) => {
+          if(error.code === 'auth/wrong-password'){
+            setErrorMessage('Incorrect Password');
+          }
+          if(error.code === 'auth/user-not-found'){
+            setErrorMessage('Email Not Exist');
+          }
+ })
+    login(
+      {
+        email,
+        password,
+      },
+      {
+        onSuccess: (data) => {
+          if (data?.token && data?.permissions?.length) {
+            Cookies.set(AUTH_TOKEN, data.token, {
               expires: remember_me ? 365 : undefined,
             });
             authorize(true);
+
             if (layout === "page") {
               // Redirect to the my-account page
               return router.push(ROUTES.ACCOUNT);
@@ -81,47 +113,15 @@ const LoginForm: React.FC<Props> = ({ layout = "modal" }) => {
               return;
             }
           }
-          if (!data._tokenResponse.refreshToken) {
-          setErrorMessage(t("forms:error-credential-wrong"));
+          if (!data.token) {
+            setErrorMessage(t("forms:error-credential-wrong"));
           }
-        }).catch((error) => {
-          if(error.code === 'auth/wrong-password'){
-            setErrorMessage('Please check the Password');
-          }
-          if(error.code === 'auth/user-not-found'){
-            setErrorMessage('Please check the Email');
-          }
- })
-    // login(
-    //   {
-    //     email,
-    //     password,
-    //   },
-    //   {
-    //     onSuccess: (data) => {
-    //       if (data?.token && data?.permissions?.length) {
-    //         Cookies.set(AUTH_TOKEN, data.token, {
-    //           expires: remember_me ? 365 : undefined,
-    //         });
-    //         authorize(true);
-
-    //         if (layout === "page") {
-    //           // Redirect to the my-account page
-    //           return router.push(ROUTES.ACCOUNT);
-    //         } else {
-    //           closeModal();
-    //           return;
-    //         }
-    //       }
-    //       if (!data.token) {
-    //         setErrorMessage(t("forms:error-credential-wrong"));
-    //       }
-    //     },
-    //     onError: (error: any) => {
-    //       console.log(error.message);
-    //     },
-    //   }
-    // );
+        },
+        onError: (error: any) => {
+          console.log(error.message);
+        },
+      }
+    );
   }
 
   function handleSignUp() {

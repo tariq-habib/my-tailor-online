@@ -78,29 +78,67 @@ const SignUpForm: React.FC<Props> = ({ layout = "modal" }) => {
     createUserWithEmailAndPassword(auth, email, password)
         .then((data : any) => {
           console.log(data);
-          if (data._tokenResponse.refreshToken) {
-            Cookies.set(AUTH_TOKEN, data._tokenResponse.refreshToken);
-            authorize(true);
-            if (layout === "page"){
-              // Redirect to the my-account page
-              return router.push(ROUTES.ACCOUNT);
-            }else {
-              closeModal();
-              return;
-            }
-          }
-          if (!data._tokenResponse.refreshToken) {
-            setErrorMessage(t("forms:error-credential-wrong"));
-          }
+          // if (data._tokenResponse.refreshToken) {
+          //   Cookies.set(AUTH_TOKEN, data._tokenResponse.refreshToken);
+          //   authorize(true);
+          //   if (layout === "page"){
+          //     // Redirect to the my-account page
+          //     return router.push(ROUTES.ACCOUNT);
+          //   }else {
+          //     closeModal();
+          //     return;
+          //   }
+          // }
+          // if (!data._tokenResponse.refreshToken) {
+          //   setErrorMessage(t("forms:error-credential-wrong"));
+          // }
         }).catch((error) => {
           if(error.code === 'auth/email-already-in-use'){
             setErrorMessage('Already Exist Email');
           }
  })
+ signUp(
+  {
+    name,
+    email,
+    password,
+  },
+  {
+    onSuccess: (data: any) => {
+      if (data?.token && data?.permissions?.length) {
+        Cookies.set(AUTH_TOKEN, data.token);
+        authorize(true);
+
+        if (layout === "page"){
+          // Redirect to the my-account page
+          return router.push(ROUTES.ACCOUNT);
+        }else {
+          closeModal();
+          return;
+        }
+      }
+      if (!data.token) {
+        setErrorMessage(t("forms:error-credential-wrong"));
+      }
+    },
+    onError: (error: any) => {
+      const {
+        response: { data },
+      }: any = error ?? {};
+      Object.keys(data).forEach((field: any) => {
+        setError(field, {
+          type: "manual",
+          message: data[field][0],
+        });
+      });
+    },
+  }
+);
   }
   function signInWithGoogle(){
     const googleProvider = new GoogleAuthProvider();
     signInWithPopup(auth, googleProvider).then((res) => {
+      console.log(res)
       if (res.user.accessToken) {
         Cookies.set(AUTH_TOKEN, res.user.accessToken, {
           expires: 'remember_me' ? 365 : undefined,

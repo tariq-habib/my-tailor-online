@@ -31,4 +31,6 @@ export const API_ENDPOINTS = {
   UPDATE_CONTACT: "update-contact",
   CUSTOMERS: "users",
   TAGS: "tags",
+  SOCIAL_LOGIN_API: "social-login-app",
+  SOCIAL_SIGNUP_API: "social-signup-app",
 };
